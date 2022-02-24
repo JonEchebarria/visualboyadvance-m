@@ -29,6 +29,7 @@ extern "C" {
 #include <libavutil/imgutils.h>
 #include <libswscale/swscale.h>
 #include <libswresample/swresample.h>
+#include <libavcodec/avcodec.h>
 }
 
 #include <vector>
@@ -90,7 +91,11 @@ class MediaRecorder
         bool isRecording;
         int sampleRate;
         AVFormatContext *oc;
+        #if LIBAVFORMAT_VERSION_MAJOR >= 59
+        const AVOutputFormat *fmt;
+        #else
         AVOutputFormat *fmt;
+        #endif
         // pic info
         AVPixelFormat pixfmt;
         int pixsize, linesize;
@@ -98,7 +103,11 @@ class MediaRecorder
         struct SwsContext *sws;
         // stream info
         AVStream *st;
+        #if LIBAVFORMAT_VERSION_MAJOR >= 59
+        const AVCodec *vcodec;
+        #else
         AVCodec *vcodec;
+        #endif
         AVCodecContext *enc;
         int64_t npts; // for video frame pts
         AVFrame *frameIn;
@@ -106,7 +115,11 @@ class MediaRecorder
         // audio
         bool audioOnlyRecording;
         struct SwrContext *swr;
-        AVCodec *acodec;
+        #if LIBAVFORMAT_VERSION_MAJOR >= 59
+        const AVCodec *acodec;
+        #else
+        const AVCodec *acodec;
+        #endif
         AVStream *ast;
         AVCodecContext *aenc;
         int samplesCount; // for audio frame pts generation
